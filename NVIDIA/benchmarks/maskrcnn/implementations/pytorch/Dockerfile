@@ -12,22 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG FROM_IMAGE_NAME=nvcr.io/nvidia/pytorch:21.09-py3
+ARG FROM_IMAGE_NAME=registry.access.redhat.com/ubi8/python-38
 FROM ${FROM_IMAGE_NAME}
 
 # Install dependencies for system configuration logger
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-        infiniband-diags \
-        pciutils \
-        libsm6 \
-        libxext6 \
-        libxrender-dev \
-        libibumad3 \
- && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update \
+#  && apt-get install -y --no-install-recommends \
+#         infiniband-diags \
+#         pciutils \
+#         libsm6 \
+#         libxext6 \
+#         libxrender-dev \
+#         libibumad3 \
+#  && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 WORKDIR /workspace/object_detection
+
+COPY requirements.pytorch.txt .
+RUN pip install --no-cache-dir -r requirements.pytorch.txt
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
